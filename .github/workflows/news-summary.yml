@@ -1,0 +1,58 @@
+name: Global News Briefing (Free API)
+
+on:
+  schedule:
+    - cron: '30 22 * * 1-5' # 한국시간 오전 7:30 (UTC 22:30), 월~금
+  workflow_dispatch: # 수동 실행 가능
+    # 한국시간 기준 아침 7:30, 7:45, 8:00 (총 3번 깨어남)
+    - cron: '30,45 22 * * 1-5'
+    - cron: '0 23 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  summarize_news:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 의존성 설치
+        run: npm install
+
+      - name: 뉴스 요약 스크립트 실행 (실패 시 10분 대기 후 재시도)
+      - name: 뉴스 요약 스크립트 실행
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          for i in 1 2 3; do
+            echo "=== 시도 $i/3 ==="
+            npx tsx summarize-news.ts && break || {
+              if [ $i -lt 3 ]; then
+                echo "서버 혼잡으로 실패했습니다. 10분(600초) 후 다시 시도합니다..."
+                sleep 600
+              else
+                echo "3회 모두 실패했습니다."
+                exit 1
+              fi
+            }
+          done
+        run: npx tsx summarize-news.ts
+          
+      - name: 요약 결과를 텔레그램이나 위키로 전송 (예시)
+      - name: 요약 결과 및 상태 파일 GitHub에 자동 저장 (Commit)
+        run: |
+          cat news-summary-result.md
+          # 여기에 curl을 이용해 텔레그램 봇으로 전송하거나 git commit을 하는 코드를 추가할 수 있습니다.
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add news-summary-result.md last_processed_videoId.txt || true
+          git commit -m "Auto-update: Global News Briefing" || echo "No changes to commit"
+          git push
