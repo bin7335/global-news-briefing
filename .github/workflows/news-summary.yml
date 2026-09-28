@@ -1,4 +1,4 @@
-name: Global News Briefing
+﻿name: Global News Briefing
 
 on:
   push:
@@ -30,6 +30,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install yt-dlp for transcript bypass
+        run: |
+          sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+          sudo chmod a+rx /usr/local/bin/yt-dlp
+
+      - name: Install yt-dlp for transcript bypass
+        run: |
+          sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+          sudo chmod a+rx /usr/local/bin/yt-dlp
+
       - name: Run News Summary Script
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -54,3 +64,4 @@ jobs:
           git add news-summary-result.md last_processed_videoId.txt market-data.json || true
           git commit -m "Auto-update: Global News Briefing" || echo "No changes to commit"
           git push
+

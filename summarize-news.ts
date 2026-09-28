@@ -1,4 +1,30 @@
-﻿import * as fs from "fs";
+
+const { execSync } = require('child_process');
+function getTranscriptFallback(videoId) {
+  console.log('   [우회] yt-dlp를 사용하여 자막 강제 추출 시도 중...');
+  try {
+    execSync(`yt-dlp --write-auto-subs --write-subs --sub-langs ko --skip-download -o "transcript_${videoId}.%(ext)s" "https://www.youtube.com/watch?v=${videoId}"`, { stdio: 'pipe' });
+    const files = fs.readdirSync('.');
+    const vttFile = files.find(f => f.startsWith('transcript_' + videoId) && f.endsWith('.vtt'));
+    if (!vttFile) return null;
+    
+    const vttContent = fs.readFileSync(vttFile, 'utf-8');
+    const lines = vttContent.split('\n')
+        .filter(line => !line.includes('-->') && !line.startsWith('WEBVTT') && !line.startsWith('Kind:') && !line.startsWith('Language:') && line.trim() !== '')
+        .map(line => line.replace(/<[^>]+>/g, '').trim())
+        .filter(line => line.length > 0);
+    
+    const uniqueLines = [...new Set(lines)];
+    const text = uniqueLines.join(' ');
+    
+    fs.unlinkSync(vttFile);
+    return text;
+  } catch (e) {
+    console.log('   [우회 실패]: ' + e.message);
+    return null;
+  }
+}
+import * as fs from "fs";
 import { YoutubeTranscript } from "youtube-transcript";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -103,46 +129,31 @@ async function runNewsSummary() {
       return;
     }
     
+    // 첫 번째 매칭된 영상이 최신 영상 (중복 제거)
+    const latestVideoStr = [...new Set(videoMatches)][0];
+    const videoId = latestVideoStr.replace("watch?v=", "");
+    const videoUrl = `https://www.youtube.com/${latestVideoStr}`;
     
-    const uniqueVideos = [...new Set(videoMatches)];
-    let fullTranscript = "";
-    let processedVideoId = "";
+    // 2. 이미 처리한 영상인지 확인 (상태 관리)
     const stateFile = "last_processed_videoId.txt";
-
-    for (const matchStr of uniqueVideos) {
-      const vId = matchStr.replace("watch?v=", "");
-      const vUrl = `https://www.youtube.com/watch?v=${vId}`;
-
-      if (fs.existsSync(stateFile)) {
-        const lastProcessed = fs.readFileSync(stateFile, "utf-8").trim();
-        if (lastProcessed === vId) {
-          console.log(`✅ [${vId}] 영상은 이미 요약이 완료되었습니다. 새 영상이 없습니다.`);
-          return;
-        }
-      }
-
-      console.log(`\n👉 영상 확인 중: [${vId}] ` + vUrl);
-      try {
-        const transcriptLines = await YoutubeTranscript.fetchTranscript(vId);
-        fullTranscript = transcriptLines.map(t => t.text).join(" ");
-        console.log(`   ✅ 자막 추출 성공! (총 ` + fullTranscript.length + `자)`);
-        processedVideoId = vId;
-        break;
-      } catch (err) {
-        if (err.message.includes('disabled')) {
-          console.log(`   🚨 자막이 제공되지 않는 영상입니다. 이전 영상으로 넘어갑니다.`);
-          continue;
-        } else {
-          throw err;
-        }
+    if (fs.existsSync(stateFile)) {
+      const lastProcessed = fs.readFileSync(stateFile, "utf-8").trim();
+      if (lastProcessed === videoId) {
+        console.log(`✅ [${videoId}] 영상은 이미 요약을 완료했습니다. 스크립트를 종료합니다.`);
+        return; // 성공 상태로 즉시 종료
       }
     }
+    
+    console.log(`   👉 찾은 새 영상 ID: [${videoId}]`);
+    console.log(`   👉 링크: ${videoUrl}`);
 
-    if (!fullTranscript || !processedVideoId) {
-      console.log('❌ 처리할 수 있는 새 영상(자막 포함)을 찾지 못했습니다.');
-      return;
-    }
-
+    // 3. 자막(Transcript) 추출
+    console.log("\n3. 영상의 자막을 추출합니다...");
+    const transcriptLines = await YoutubeTranscript.fetchTranscript(videoId);
+    // 자막을 하나의 긴 텍스트로 합치기
+    const fullTranscript = transcriptLines.map(t => t.text).join(" ");
+    console.log(`   👉 자막 추출 성공! (총 ${fullTranscript.length}자)`);
+    
     // 4. Gemini API 호출
     console.log("\n4. Gemini Flash 최신 API를 호출하여 요약합니다...");
     
@@ -219,10 +230,10 @@ ${fullTranscript.substring(0, 30000)}
     console.log(summary);
     
     const today = new Date().toISOString().split("T")[0];
-    const reportContent = `# ${today} Global News Briefing\n\n- 출처: [당잠사 최신 영상](https://www.youtube.com/watch?v=${processedVideoId})\n\n---\n\n${summary}`;
+    const reportContent = `# ${today} Global News Briefing\n\n- 출처: [당잠사 최신 영상](${videoUrl})\n\n---\n\n${summary}`;
     
     fs.writeFileSync("news-summary-result.md", reportContent);
-    fs.writeFileSync(stateFile, processedVideoId); // 성공한 영상 ID 저장
+    fs.writeFileSync(stateFile, videoId); // 성공한 영상 ID 저장
     
     console.log("\n👉 'news-summary-result.md' 파일에 상세 브리핑이 저장되었습니다.");
 
@@ -233,4 +244,3 @@ ${fullTranscript.substring(0, 30000)}
 }
 
 runNewsSummary();
-
