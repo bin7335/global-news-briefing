@@ -1,6 +1,8 @@
-name: Global News Briefing (Free API)
+﻿name: Global News Briefing (Free API)
 
 on:
+  push:
+    branches: [ main ]
   schedule:
     - cron: '30 22 * * 1-5' # 한국시간 오전 7:30 (UTC 22:30), 월~금
   workflow_dispatch: # 수동 실행 가능
@@ -56,3 +58,4 @@ jobs:
           git add news-summary-result.md last_processed_videoId.txt || true
           git commit -m "Auto-update: Global News Briefing" || echo "No changes to commit"
           git push
+
