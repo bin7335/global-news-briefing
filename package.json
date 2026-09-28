@@ -4,7 +4,10 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "tsx --test tests/*.test.ts",
+        "typecheck": "tsc --noEmit",
+        "check:source": "tsx summarize-news.ts --check-source",
+        "briefing": "tsx summarize-news.ts"
     },
     "keywords": [],
     "author": "",

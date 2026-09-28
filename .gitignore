@@ -1,3 +1,7 @@
 node_modules/
 .env
 .DS_Store
+cookies.txt
+*cookies*.txt
+transcript_*
+*.tmp

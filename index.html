@@ -14,6 +14,7 @@
   
   <!-- Marked.js -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.7/dist/purify.min.js"></script>
 
   <script>
     tailwind.config = {
@@ -131,12 +132,12 @@
         <div id="market-snapshot" class="flex flex-wrap items-center gap-3 sm:gap-5 text-sm md:text-base bg-white/60 p-4 rounded-xl border border-line shadow-sm">
         <div class="flex flex-col items-center">
           <span class="text-xs text-stone-500 font-medium mb-1">원/달러</span>
-          <span class="font-bold text-ink" id="stat-fx">1,357.78</span>
+          <span class="font-bold text-ink" id="stat-fx">--</span>
         </div>
         <div class="w-px h-8 bg-line"></div>
         <div class="flex flex-col items-center">
           <span class="text-xs text-stone-500 font-medium mb-1">미 10년물</span>
-          <span class="font-bold text-red-600" id="stat-us10y">4.968% <span class="text-xs">▲</span></span>
+          <span class="font-bold text-ink" id="stat-us10y">--</span>
         </div>
         <div class="w-px h-8 bg-line"></div>
         <div class="flex flex-col items-center">
@@ -151,7 +152,7 @@
         <div class="w-px h-8 bg-line"></div>
         <div class="flex flex-col items-center">
           <span class="text-xs text-stone-500 font-medium mb-1">CNN 공포탐욕</span>
-          <span class="font-bold text-emerald-600" id="stat-fgi">45 <span class="text-xs font-normal">(Fear)</span></span>
+          <span class="font-bold text-ink" id="stat-fgi">--</span>
         </div>
       </div>
       </div>
@@ -188,6 +189,7 @@
     }
     
     function formatChange(changePercent) {
+      if (changePercent == null || !Number.isFinite(changePercent)) return '';
       if (!changePercent || changePercent === 0) return `<span class="text-xs font-normal text-stone-400">(0.00%)</span>`;
       const sign = changePercent > 0 ? '+' : '';
       const colorClass = changePercent > 0 ? 'text-red-500' : 'text-blue-500';
@@ -196,27 +198,23 @@
 
     // 시장 지표 불러오기
     fetch('market-data.json?t=' + new Date().getTime())
-      .then(res => res.json())
+      .then(res => { if (!res.ok) throw new Error('시세 조회 실패'); return res.json(); })
       .then(data => {
-        if(data.fx) document.getElementById('stat-fx').innerHTML = `${formatNumber(data.fx.price)} ${formatChange(data.fx.change)}`;
-        if(data.nasdaq) document.getElementById('stat-nasdaq').innerHTML = `${formatNumber(data.nasdaq.price)} ${formatChange(data.nasdaq.change)}`;
-        if(data.sp500) document.getElementById('stat-sp500').innerHTML = `${formatNumber(data.sp500.price)} ${formatChange(data.sp500.change)}`;
-        if(data.kospi) document.getElementById('stat-kospi').innerHTML = `${formatNumber(data.kospi.price)} ${formatChange(data.kospi.change)}`;
-        if(data.us10y) document.getElementById('stat-us10y').innerHTML = `${formatNumber(data.us10y.price)}% ${formatChange(data.us10y.change)}`;
-        if(data.kr10y) document.getElementById('stat-kr10y').innerHTML = `${formatNumber(data.kr10y.price)}%`;
-        if(data.jp10y) document.getElementById('stat-jp10y').innerHTML = `${formatNumber(data.jp10y.price)}%`;
-        
-        let fgiText = "Neutral";
-        if (data.fgi) {
-           if (data.fgi.price < 35) fgiText = "Extreme Fear";
-           else if (data.fgi.price < 45) fgiText = "Fear";
-           else if (data.fgi.price > 75) fgiText = "Extreme Greed";
-           else if (data.fgi.price > 55) fgiText = "Greed";
-           document.getElementById('stat-fgi').innerHTML = `${data.fgi.price} <span class="text-xs font-normal text-stone-500">(${fgiText})</span>`;
+        for (const key of ['fx', 'nasdaq', 'sp500', 'kospi', 'us10y', 'kr10y', 'jp10y', 'fgi']) {
+          const element = document.getElementById('stat-' + key);
+          if (!element) continue;
+          const quote = data[key];
+          if (quote?.price == null || !Number.isFinite(Number(quote.price))) {
+            element.textContent = '--';
+            continue;
+          }
+          const suffix = key.endsWith('10y') ? '%' : '';
+          const stale = quote.stale ? ' <span class="text-xs text-stone-400">(이전 값)</span>' : '';
+          element.innerHTML = `${formatNumber(quote.price)}${suffix} ${formatChange(quote.change)}${stale}`;
         }
 
         if(data.updatedAt) {
-          document.getElementById('update-time').innerText = `최근 업데이트: ${data.updatedAt}`;
+          document.getElementById('update-time').innerText = `최근 업데이트: ${data.updatedAt}${data.partial ? ' · 일부 지표 갱신 지연' : ''}`;
         }
       })
       .catch(e => console.log('Market data not found yet.'));
@@ -228,7 +226,7 @@
         return response.text();
       })
       .then(text => {
-        document.getElementById('content').innerHTML = marked.parse(text);
+        document.getElementById('content').innerHTML = DOMPurify.sanitize(marked.parse(text));
       })
       .catch(error => {
         document.getElementById('content').innerHTML = `
@@ -238,8 +236,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-

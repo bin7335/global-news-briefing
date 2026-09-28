@@ -1,73 +1,91 @@
-﻿name: Global News Briefing
+name: Global News Briefing
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+    paths:
+      - 'summarize-news.ts'
+      - 'tests/**'
+      - 'tsconfig.json'
+      - 'package*.json'
+      - '.github/workflows/news-summary.yml'
   schedule:
-    # 7:30 AM KST = 10:30 PM UTC
-    - cron: '30 22 * * 1-5'
-    # 7:45 AM KST = 10:45 PM UTC
-    - cron: '45 22 * * 1-5'
-    # 8:00 AM KST = 11:00 PM UTC
-    - cron: '0 23 * * 1-5'
+    # Monday-Friday 07:30, 07:45, 08:00 KST = Sunday-Thursday UTC.
+    - cron: '30,45 22 * * 0-4'
+    - cron: '0 23 * * 0-4'
   workflow_dispatch:
+
+concurrency:
+  group: news-briefing-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   summarize_news:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     permissions:
       contents: write
-      
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
         with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install yt-dlp for transcript bypass
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install dependencies and test
         run: |
-          sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
-          sudo chmod a+rx /usr/local/bin/yt-dlp
-
-      - name: Install yt-dlp for transcript bypass
+          npm ci
+          npm run typecheck
+          npm test
+      - name: Install yt-dlp
         run: |
-          sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
-          sudo chmod a+rx /usr/local/bin/yt-dlp
-
-      - name: Run News Summary Script
+          curl --fail --location --retry 3 https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o "$RUNNER_TEMP/yt-dlp"
+          chmod +x "$RUNNER_TEMP/yt-dlp"
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+      - name: Prepare optional YouTube cookies
         env:
           YOUTUBE_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
-          
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           if [ -n "$YOUTUBE_COOKIES" ]; then
-            echo "$YOUTUBE_COOKIES" > cookies.txt
+            umask 077
+            printf '%s\n' "$YOUTUBE_COOKIES" > "$RUNNER_TEMP/youtube-cookies.txt"
+            echo "YOUTUBE_COOKIE_FILE=$RUNNER_TEMP/youtube-cookies.txt" >> "$GITHUB_ENV"
+          else
+            echo "No YouTube cookies: Gemini video input is available as fallback."
           fi
-          for i in 1 2 3; do
-            echo "=== Try $i/3 ==="
-            npx tsx summarize-news.ts && break || {
-              if [ $i -lt 3 ]; then
-                echo "Failed. Retrying in 10 minutes..."
-                sleep 600
-              else
-                echo "All 3 attempts failed."
-                exit 1
-              fi
-            }
-          done
-
-      - name: Commit and Push changes
+      - name: Collect market snapshot
+        run: npx --no-install tsx summarize-news.ts --market-only
+      - name: Generate briefing
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          git config --global user.name "GitHub Actions Bot"
-          git config --global user.email "actions@github.com"
-          git add news-summary-result.md last_processed_videoId.txt market-data.json || true
-          git commit -m "Auto-update: Global News Briefing" || echo "No changes to commit"
-          git push
-
-
+          for attempt in 1 2 3; do
+            if npx --no-install tsx summarize-news.ts; then exit 0; fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "Briefing failed. Retrying in 60 seconds ($attempt/3)."
+              sleep 60
+            fi
+          done
+          exit 1
+      - name: Publish collected data
+        if: ${{ !cancelled() }}
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          for file in news-summary-result.md last_processed_videoId.txt market-data.json; do
+            if [ -f "$file" ]; then git add -- "$file"; fi
+          done
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Auto-update: Global News Briefing"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then exit 0; fi
+            sleep 5
+          done
+          exit 1
+      - name: Remove temporary cookies
+        if: always()
+        run: rm -f -- "$RUNNER_TEMP/youtube-cookies.txt"
