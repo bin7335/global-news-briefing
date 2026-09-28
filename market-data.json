@@ -1,27 +1,50 @@
 {
   "fx": {
-    "price": 1359.58,
-    "change": 0.29803620697286426
+    "price": 1359.13,
+    "change": 0.2840741396611871,
+    "stale": false,
+    "observedAt": "2026-09-28T13:23:00.291Z"
   },
   "nasdaq": {
-    "price": 27244.277,
-    "change": 0.45049250253316453
+    "price": 27068.717,
+    "change": 0.48002925083706055,
+    "stale": false,
+    "observedAt": "2026-09-28T13:23:00.340Z"
   },
   "sp500": {
-    "price": 7764.64,
-    "change": -0.0007727278581206059
+    "price": 7743.41,
+    "change": 0.5098564016962298,
+    "stale": false,
+    "observedAt": "2026-09-28T13:23:00.351Z"
   },
   "kospi": {
-    "price": 7066.65,
-    "change": 0.694508764005235
+    "price": 6889.74,
+    "change": -2.6999316473000725,
+    "stale": false,
+    "observedAt": "2026-09-28T13:23:00.404Z"
   },
   "us10y": {
-    "price": 4.968,
-    "change": 0.10073946600406089
+    "price": 5.219,
+    "change": 0.675154320987657,
+    "stale": false,
+    "observedAt": "2026-09-28T13:23:00.439Z"
+  },
+  "kr10y": {
+    "price": null,
+    "change": null,
+    "stale": true
+  },
+  "jp10y": {
+    "price": null,
+    "change": null,
+    "stale": true
   },
   "fgi": {
     "price": "72",
-    "change": -4.438466711499653
+    "change": -4.438466711499653,
+    "stale": true
   },
-  "updatedAt": "9. 23. 15:44"
+  "updatedAt": "2026. 9. 28. 22시 23분 0초",
+  "checkedAt": "2026-09-28T13:23:00.874Z",
+  "partial": true
 }
