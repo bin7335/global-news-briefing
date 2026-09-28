@@ -42,8 +42,13 @@ jobs:
 
       - name: Run News Summary Script
         env:
+          YOUTUBE_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
+          
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
+          if [ -n "$YOUTUBE_COOKIES" ]; then
+            echo "$YOUTUBE_COOKIES" > cookies.txt
+          fi
           for i in 1 2 3; do
             echo "=== Try $i/3 ==="
             npx tsx summarize-news.ts && break || {
@@ -64,4 +69,5 @@ jobs:
           git add news-summary-result.md last_processed_videoId.txt market-data.json || true
           git commit -m "Auto-update: Global News Briefing" || echo "No changes to commit"
           git push
+
 

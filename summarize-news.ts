@@ -158,7 +158,8 @@ async function runNewsSummary() {
         console.log('   🚨 YoutubeTranscript 실패, yt-dlp 우회 시도 중...');
         try {
           const { execSync } = require('child_process');
-          execSync('yt-dlp --write-auto-subs --write-subs --sub-langs ko --skip-download -o "transcript_' + vId + '.%(ext)s" "' + vUrl + '"', { stdio: 'pipe' });
+          const cookieArg = fs.existsSync('cookies.txt') ? '--cookies cookies.txt ' : '';
+          execSync('yt-dlp ' + cookieArg + '--write-auto-subs --write-subs --sub-langs ko --skip-download -o "transcript_' + vId + '.%(ext)s" "' + vUrl + '"', { stdio: 'pipe' });
           const files = fs.readdirSync('.');
           const vttFile = files.find(f => f.startsWith('transcript_' + vId) && f.endsWith('.vtt'));
           if (vttFile) {
@@ -277,5 +278,6 @@ ${fullTranscript.substring(0, 30000)}
 }
 
 runNewsSummary();
+
 
 
