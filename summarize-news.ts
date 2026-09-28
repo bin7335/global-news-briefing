@@ -12,7 +12,7 @@ if (!GEMINI_API_KEY) {
 // 사용자님이 주신 당잠사 플레이리스트 ID
 const PLAYLIST_ID = "PLh6kUo7pqm_69KUuM0hOj-ClLo6GWdgUH";
 
-// [추가] 야후 파이낸스에서 시장 지표 가져오기
+// [추가] 야후 파이낸스, 구글 파이낸스, CNN에서 시장 지표 가져오기
 async function fetchMarketSnapshot() {
   const tickers = {
     fx: 'KRW=X',
@@ -41,20 +41,37 @@ async function fetchMarketSnapshot() {
     }
   }
 
-  // CNN 공포탐욕 대신 월가 공포지수(VIX) 사용
+  // 구글 파이낸스에서 한국/일본 10년물 긁어오기 (로컬 사내망에서는 차단될 수 있으나 GitHub Actions 서버는 문제없음)
+  const bonds = {
+    kr10y: 'https://www.google.com/finance/quote/KR10YT=RR:BOK',
+    jp10y: 'https://www.google.com/finance/quote/JP10YT=RR:BOJ'
+  };
+  for (const [key, url] of Object.entries(bonds)) {
+    try {
+      const res = await fetch(url);
+      const html = await res.text();
+      // data-last-price="3.123" 형태 파싱
+      const priceMatch = html.match(/data-last-price="([^"]+)"/);
+      let price = priceMatch ? parseFloat(priceMatch[1]) : 0;
+      results[key] = { price: price, change: 0 }; // 변동률은 파싱이 까다로우므로 0으로 처리 (화면엔 --%로 표시됨)
+    } catch (err) {
+      console.log(`[시장 지표] ${key} 가져오기 실패:`, err.message);
+      results[key] = { price: 0, change: 0 };
+    }
+  }
+
+  // 진짜 CNN 공포탐욕지수 실시간 호출 (봇 차단 우회를 위한 User-Agent 설정)
   try {
-    const vixRes = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/^VIX`);
-    const vixJson = await vixRes.json();
-    const vixMeta = vixJson.chart.result[0].meta;
-    const vixPrev = vixMeta.chartPreviousClose || vixMeta.previousClose;
-    
-    // VIX 수치를 대략 0~100의 공포탐욕지수 형태로 가공 (VIX 높으면 공포, 낮으면 탐욕)
-    // 일반적으로 VIX 20이상이면 Fear, 30이상이면 Extreme Fear
-    let fgiValue = Math.max(0, 100 - (vixMeta.regularMarketPrice * 2)); 
-    let change = vixPrev ? ((vixMeta.regularMarketPrice - vixPrev) / vixPrev) * 100 : 0;
-    
-    results['fgi'] = { price: fgiValue.toFixed(0), change: change };
+    const cnnRes = await fetch('https://production.dataviz.cnn.io/index/fearandgreed/graphdata', {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36' }
+    });
+    const cnnJson = await cnnRes.json();
+    const score = cnnJson.fear_and_greed.score;
+    const prevScore = cnnJson.fear_and_greed.previous_close;
+    const change = prevScore ? ((score - prevScore) / prevScore) * 100 : 0;
+    results['fgi'] = { price: score.toFixed(0), change: change };
   } catch(e) {
+    console.log(`[시장 지표] CNN 공포지수 실패:`, e.message);
     results['fgi'] = { price: 50, change: 0 };
   }
 

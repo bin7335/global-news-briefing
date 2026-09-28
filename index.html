@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -140,6 +140,16 @@
         </div>
         <div class="w-px h-8 bg-line"></div>
         <div class="flex flex-col items-center">
+          <span class="text-xs text-stone-500 font-medium mb-1">한 10년물</span>
+          <span class="font-bold text-ink" id="stat-kr10y">--</span>
+        </div>
+        <div class="w-px h-8 bg-line"></div>
+        <div class="flex flex-col items-center">
+          <span class="text-xs text-stone-500 font-medium mb-1">일 10년물</span>
+          <span class="font-bold text-ink" id="stat-jp10y">--</span>
+        </div>
+        <div class="w-px h-8 bg-line"></div>
+        <div class="flex flex-col items-center">
           <span class="text-xs text-stone-500 font-medium mb-1">CNN 공포탐욕</span>
           <span class="font-bold text-emerald-600" id="stat-fgi">45 <span class="text-xs font-normal">(Fear)</span></span>
         </div>
@@ -193,6 +203,8 @@
         if(data.sp500) document.getElementById('stat-sp500').innerHTML = `${formatNumber(data.sp500.price)} ${formatChange(data.sp500.change)}`;
         if(data.kospi) document.getElementById('stat-kospi').innerHTML = `${formatNumber(data.kospi.price)} ${formatChange(data.kospi.change)}`;
         if(data.us10y) document.getElementById('stat-us10y').innerHTML = `${formatNumber(data.us10y.price)}% ${formatChange(data.us10y.change)}`;
+        if(data.kr10y) document.getElementById('stat-kr10y').innerHTML = `${formatNumber(data.kr10y.price)}%`;
+        if(data.jp10y) document.getElementById('stat-jp10y').innerHTML = `${formatNumber(data.jp10y.price)}%`;
         
         let fgiText = "Neutral";
         if (data.fgi) {
@@ -226,3 +238,8 @@
   </script>
 </body>
 </html>
+
+
+
+
+
