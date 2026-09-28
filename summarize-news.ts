@@ -176,7 +176,7 @@ async function runNewsSummary() {
              throw new Error('VTT file not found');
           }
         } catch (fallbackErr) {
-          console.log('   🚨 yt-dlp 우회도 실패했습니다. 이전 영상으로 넘어갑니다.');
+          console.log('   🚨 yt-dlp 우회도 실패했습니다. 사유: ' + fallbackErr.message); console.log('   🚨 yt-dlp 출력: ' + (fallbackErr.stdout ? fallbackErr.stdout.toString() : '')); console.log('   🚨 yt-dlp 에러출력: ' + (fallbackErr.stderr ? fallbackErr.stderr.toString() : ''));
           continue;
         }
       }
@@ -277,4 +277,5 @@ ${fullTranscript.substring(0, 30000)}
 }
 
 runNewsSummary();
+
 
