@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
-import { buildSummaryParts, checkedFetch, extractSummary, fetchMarketSnapshot, koreanDate, parsePlaylist, parseVtt, updateBriefing, validateTranscript } from '../summarize-news';
+import { buildSummaryParts, checkedFetch, extractSummary, fetchMarketSnapshot, koreanDate, parsePlaylist, parseVtt, updateBriefing, validateTranscript, parseCnbcBond, parseFearGreed } from '../summarize-news';
 
 const video = { id: 'abcdefghijk', title: '오늘 뉴스 } "제목"' };
 const summary = "## ☕ Market Overview\n시황\n## 🗞️ Today's Briefing\n" + '<details><summary>뉴스</summary><div>본문</div></details>'.repeat(3);
@@ -44,6 +44,35 @@ test('Gemini refusals, empty output and truncated output are rejected', () => {
   assert.equal(extractSummary(result(summary)), summary);
   for (const data of [{}, result('SOURCE_UNAVAILABLE'), result(''), result(summary, 'MAX_TOKENS')]) assert.throws(() => extractSummary(data));
 });
+test('importance selection accepts one or many real issues, with no count quota', () => {
+  for (const count of [1, 2, 7]) {
+    const text = "## Market Overview\n시황\n## Today's Briefing\n" + '<details><summary>핵심</summary>설명</details>'.repeat(count);
+    assert.equal(extractSummary({ candidates: [{ finishReason: 'STOP', content: { parts: [{ text }] } }] }), text);
+  }
+  const prompt = (buildSummaryParts(video, 'test')[0] as any).text;
+  assert.doesNotMatch(prompt, /3-5개/);
+  assert.match(prompt, /중요도/);
+});
+test('CNBC yield change uses basis points, never the bond price percentage', () => {
+  const data = { ITVQuoteResult: { ITVQuote: [{ symbol: 'JP10Y-JP', code: '0', type: 'BOND', last: '3.099%', previous_day_closing: '3.088%', change_pct: '-0.0824%', last_timedate: '9:22 AM JST' }] } };
+  const result = parseCnbcBond(data, 'JP10Y-JP');
+  assert.equal(result.price, 3.099);
+  assert.equal(result.changeBp, 1.1);
+  assert.equal(result.change, null);
+  assert.throws(() => parseCnbcBond(data, 'KR10Y-KR'));
+  data.ITVQuoteResult.ITVQuote[0].last = 'N/A';
+  assert.throws(() => parseCnbcBond(data, 'JP10Y-JP'));
+});
+test('CNN validates score and source timestamp rather than relabeling an old value', () => {
+  const now = Date.parse('2026-09-29T01:00:00Z');
+  const payload = { fear_and_greed: { score: 33.94, rating: 'fear', timestamp: '2026-09-28T23:59:50Z' } };
+  const result = parseFearGreed(payload, now);
+  assert.equal(result.price, 34);
+  assert.equal(result.rating, 'fear');
+  assert.equal(result.sourceAsOf, '2026-09-28T23:59:50.000Z');
+  assert.throws(() => parseFearGreed(payload, now + 6 * 86400_000));
+  assert.throws(() => parseFearGreed({ fear_and_greed: { ...payload.fear_and_greed, score: 101 } }, now));
+});
 test('failed generation preserves previous report/state and rejects for retry', async t => {
   const dir = temp(t);
   fs.writeFileSync(path.join(dir, 'news-summary-result.md'), 'previous report');
@@ -65,6 +94,11 @@ test('video fallback saves provenance; rerun skips API and restores missing stat
 test('state alone never suppresses regeneration of a missing report', async t => {
   const dir = temp(t);
   fs.writeFileSync(path.join(dir, 'last_processed_videoId.txt'), video.id);
+  assert.equal((await updateBriefing({ directory: dir, latest: async () => video, transcript: async () => null, summarize: async () => summary })).status, 'updated');
+});
+test('an existing report from the old selection policy is regenerated for the same video', async t => {
+  const dir = temp(t);
+  fs.writeFileSync(path.join(dir, 'news-summary-result.md'), `https://www.youtube.com/watch?v=${video.id}\n${summary}`);
   assert.equal((await updateBriefing({ directory: dir, latest: async () => video, transcript: async () => null, summarize: async () => summary })).status, 'updated');
 });
 test('report date uses Korea timezone at UTC date boundary', () => {

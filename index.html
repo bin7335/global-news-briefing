@@ -75,6 +75,7 @@
     .market-item + .market-item { border-left: 1px solid #eaddce; }
     .market-label { display: block; font-size: 12px; color: #78716c; white-space: nowrap; margin-bottom: 6px; }
     .market-value { display: flex; flex-direction: column; align-items: center; gap: 2px; font-weight: 700; white-space: nowrap; }
+    .market-meta { font-size: 10px; font-weight: 400; color: #78716c; white-space: normal; }
     @media (max-width: 480px) {
       .market-item { padding: 4px 2px; }
       .market-label { font-size: 10px; }
@@ -196,8 +197,20 @@
     }
 
     // 포맷팅 헬퍼 함수
-    function formatNumber(num) {
-      return Number(num).toLocaleString('en-US', { maximumFractionDigits: 2 });
+    function formatNumber(num, digits = 2) {
+      return Number(num).toLocaleString('en-US', { maximumFractionDigits: digits });
+    }
+    function formatBasisPoints(value) {
+      if (value == null || !Number.isFinite(value)) return '';
+      return `<span class="text-xs font-normal text-stone-500">(${value > 0 ? '+' : ''}${formatNumber(value)}bp)</span>`;
+    }
+    function quoteAsOf(value) {
+      if (!value) return '';
+      let label = value;
+      if (/^\d{4}-\d{2}-\d{2}T/.test(value) && Number.isFinite(Date.parse(value))) {
+        label = new Date(value).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
+      }
+      return String(label).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
     }
     
     function formatChange(changePercent) {
@@ -222,7 +235,11 @@
           }
           const suffix = key.endsWith('10y') ? '%' : '';
           const stale = quote.stale ? ' <span class="text-xs text-stone-400">(이전 값)</span>' : '';
-          element.innerHTML = `<span>${formatNumber(quote.price)}${suffix}</span>${formatChange(quote.change)}${stale}`;
+          const rating = { 'extreme fear': '극단적 공포', fear: '공포', neutral: '중립', greed: '탐욕', 'extreme greed': '극단적 탐욕' }[quote.rating];
+          const change = key.endsWith('10y') ? formatBasisPoints(quote.changeBp) : key === 'fgi' ? (rating ? `<span class="text-xs font-normal">${rating}</span>` : '') : formatChange(quote.change);
+          const asOf = quote.sourceAsOf ? `<span class="market-meta">${quoteAsOf(quote.sourceAsOf)}</span>` : '';
+          element.title = `${quote.source || '시세 제공처'} · ${quote.sourceAsOf || '기준 시각 미제공'}${quote.stale ? ' · 갱신 지연' : ''}`;
+          element.innerHTML = `<span>${formatNumber(quote.price, key.endsWith('10y') ? 3 : 2)}${suffix}</span>${change}${stale}${asOf}`;
         }
 
         if(data.updatedAt) {
