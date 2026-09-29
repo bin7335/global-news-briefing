@@ -15,6 +15,7 @@
 ## 자동 실행
 
 GitHub Actions가 한국 시간 월-금 07:30, 07:45, 08:00에 실행됩니다.
+누락·지연 및 늦은 업로드를 확인하기 위해 08:17, 09:17, 10:17, 11:17, 12:17에도 재확인합니다.
 예약 실행 시각은 GitHub 상황에 따라 지연될 수 있습니다.
 필수 repository Secret은 `GEMINI_API_KEY`입니다.
 선택 Secret `YOUTUBE_COOKIES`는 Netscape 형식이며, 없어도 영상 직접 분석을 시도합니다.

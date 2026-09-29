@@ -66,6 +66,21 @@
       word-break: keep-all;
       overflow-wrap: break-word;
     }
+    #market-snapshot {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      width: 100%;
+    }
+    .market-item { min-width: 0; text-align: center; padding: 4px 8px; }
+    .market-item + .market-item { border-left: 1px solid #eaddce; }
+    .market-label { display: block; font-size: 12px; color: #78716c; white-space: nowrap; margin-bottom: 6px; }
+    .market-value { display: flex; flex-direction: column; align-items: center; gap: 2px; font-weight: 700; white-space: nowrap; }
+    @media (max-width: 480px) {
+      .market-item { padding: 4px 2px; }
+      .market-label { font-size: 10px; }
+      .market-value { font-size: 13px; }
+      .market-value .text-xs { font-size: 10px; }
+    }
     
     /* 아코디언(details/summary) 커스텀 디자인 */
     details {
@@ -118,7 +133,7 @@
 
   <!-- Header Section -->
   <header class="border-b border-line">
-    <div class="max-w-3xl lg:max-w-7xl mx-auto px-5 md:px-12 pt-12 md:pt-16 pb-8 flex flex-col lg:flex-row lg:justify-between lg:items-end gap-6">
+    <div class="max-w-3xl lg:max-w-7xl mx-auto px-5 md:px-12 pt-12 md:pt-16 pb-8 flex flex-col gap-6">
       <div>
         <p class="text-xs md:text-sm font-bold text-emerald-700 tracking-widest uppercase mb-2">Morning Report</p>
         <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-ink">
@@ -127,32 +142,28 @@
       </div>
       
       <!-- 우측 상단: 주요 시장 지표 (Market Snapshot) -->
-      <div class="flex flex-col items-start lg:items-end gap-2">
+      <div class="flex flex-col items-start gap-2 w-full">
         <span id="update-time" class="text-xs text-stone-400 font-medium tracking-wide">업데이트 대기 중...</span>
-        <div id="market-snapshot" class="flex flex-wrap items-center gap-3 sm:gap-5 text-sm md:text-base bg-white/60 p-4 rounded-xl border border-line shadow-sm">
-        <div class="flex flex-col items-center">
-          <span class="text-xs text-stone-500 font-medium mb-1">원/달러</span>
-          <span class="font-bold text-ink" id="stat-fx">--</span>
+        <div id="market-snapshot" class="text-sm md:text-base bg-white/60 py-4 px-1 md:px-4 rounded-xl border border-line shadow-sm">
+        <div class="market-item">
+          <span class="market-label">원/달러</span>
+          <span class="market-value" id="stat-fx">--</span>
         </div>
-        <div class="w-px h-8 bg-line"></div>
-        <div class="flex flex-col items-center">
-          <span class="text-xs text-stone-500 font-medium mb-1">미 10년물</span>
-          <span class="font-bold text-ink" id="stat-us10y">--</span>
+        <div class="market-item">
+          <span class="market-label">미 10년물</span>
+          <span class="market-value" id="stat-us10y">--</span>
         </div>
-        <div class="w-px h-8 bg-line"></div>
-        <div class="flex flex-col items-center">
-          <span class="text-xs text-stone-500 font-medium mb-1">한 10년물</span>
-          <span class="font-bold text-ink" id="stat-kr10y">--</span>
+        <div class="market-item">
+          <span class="market-label">한 10년물</span>
+          <span class="market-value" id="stat-kr10y">--</span>
         </div>
-        <div class="w-px h-8 bg-line"></div>
-        <div class="flex flex-col items-center">
-          <span class="text-xs text-stone-500 font-medium mb-1">일 10년물</span>
-          <span class="font-bold text-ink" id="stat-jp10y">--</span>
+        <div class="market-item">
+          <span class="market-label">일 10년물</span>
+          <span class="market-value" id="stat-jp10y">--</span>
         </div>
-        <div class="w-px h-8 bg-line"></div>
-        <div class="flex flex-col items-center">
-          <span class="text-xs text-stone-500 font-medium mb-1">CNN 공포탐욕</span>
-          <span class="font-bold text-ink" id="stat-fgi">--</span>
+        <div class="market-item">
+          <span class="market-label">CNN 공포탐욕</span>
+          <span class="market-value" id="stat-fgi">--</span>
         </div>
       </div>
       </div>
@@ -161,6 +172,7 @@
 
   <!-- Main Content Section -->
   <main class="max-w-3xl lg:max-w-7xl mx-auto px-5 md:px-12 py-10 md:py-16 min-h-[50vh]">
+    <p id="briefing-status" role="status" class="text-sm text-stone-500 mb-6">브리핑 날짜 확인 중...</p>
     <article id="content" class="prose md:prose-lg lg:prose-2xl max-w-none prose-a:transition-colors">
       <div class="flex justify-center items-center py-20">
         <span class="text-stone-400 font-medium tracking-wide">오늘의 브리핑을 준비하고 있습니다...</span>
@@ -210,7 +222,7 @@
           }
           const suffix = key.endsWith('10y') ? '%' : '';
           const stale = quote.stale ? ' <span class="text-xs text-stone-400">(이전 값)</span>' : '';
-          element.innerHTML = `${formatNumber(quote.price)}${suffix} ${formatChange(quote.change)}${stale}`;
+          element.innerHTML = `<span>${formatNumber(quote.price)}${suffix}</span>${formatChange(quote.change)}${stale}`;
         }
 
         if(data.updatedAt) {
@@ -219,6 +231,20 @@
       })
       .catch(e => console.log('Market data not found yet.'));
 
+    function briefingFreshness(text, now = new Date()) {
+      const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
+      const generated = text.match(/^# (\d{4}-\d{2}-\d{2}) Global News Briefing/m)?.[1];
+      // The source broadcast date matters even if an older video was summarized today.
+      const source = text.match(/^- 원본 영상:.*?(\d{2})\/(\d{2})/m);
+      let sourceDate = generated;
+      if (source && generated) {
+        let year = Number(generated.slice(0, 4));
+        if (source[1] === '12' && generated.slice(5, 7) === '01') year--;
+        sourceDate = `${year}-${source[1]}-${source[2]}`;
+      }
+      return sourceDate === today ? `${sourceDate} · 오늘 브리핑` : `${sourceDate || '날짜 미확인'} · 오늘 브리핑 갱신 대기 중`;
+    }
+
     // 브리핑 불러오기
     fetch('news-summary-result.md?t=' + new Date().getTime())
       .then(response => {
@@ -226,9 +252,11 @@
         return response.text();
       })
       .then(text => {
+        document.getElementById('briefing-status').textContent = briefingFreshness(text);
         document.getElementById('content').innerHTML = DOMPurify.sanitize(marked.parse(text));
       })
       .catch(error => {
+        document.getElementById('briefing-status').textContent = '브리핑을 불러오지 못했습니다.';
         document.getElementById('content').innerHTML = `
           <p class="text-red-500 font-medium text-center py-10">${error.message}</p>
         `;
