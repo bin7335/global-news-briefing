@@ -1,47 +1,47 @@
 {
   "fx": {
-    "price": 1358.98,
-    "change": 0.019135657089024295,
+    "price": 1358.28,
+    "change": -0.032383419689123186,
     "stale": false,
-    "observedAt": "2026-09-29T02:09:50.341Z"
+    "observedAt": "2026-09-29T02:23:14.439Z"
   },
   "nasdaq": {
     "price": 26820.38,
     "change": -0.9174317349433279,
     "stale": false,
-    "observedAt": "2026-09-29T02:09:50.383Z"
+    "observedAt": "2026-09-29T02:23:14.486Z"
   },
   "sp500": {
     "price": 7683.69,
     "change": -0.7712364449254302,
     "stale": false,
-    "observedAt": "2026-09-29T02:09:50.391Z"
+    "observedAt": "2026-09-29T02:23:14.497Z"
   },
   "kospi": {
-    "price": 6886.05,
-    "change": -0.05355789913697179,
+    "price": 6875.92,
+    "change": -0.20058812088699587,
     "stale": false,
-    "observedAt": "2026-09-29T02:09:50.428Z"
+    "observedAt": "2026-09-29T02:23:14.560Z"
   },
   "us10y": {
-    "price": 5.238,
+    "price": 5.234,
     "change": null,
-    "changeBp": -0.4,
+    "changeBp": -0.8,
     "source": "CNBC",
     "sourceUrl": "https://www.cnbc.com/quotes/US10Y",
-    "sourceAsOf": "10:09 PM EDT",
+    "sourceAsOf": "10:22 PM EDT",
     "stale": false,
-    "observedAt": "2026-09-29T02:09:50.499Z"
+    "observedAt": "2026-09-29T02:23:14.769Z"
   },
   "kr10y": {
-    "price": 4.521,
+    "price": 4.51,
     "change": null,
-    "changeBp": -2.3,
+    "changeBp": -3.4,
     "source": "CNBC",
     "sourceUrl": "https://www.cnbc.com/quotes/KR10Y-KR",
-    "sourceAsOf": "2:08 AM GMT",
+    "sourceAsOf": "2:22 AM GMT",
     "stale": false,
-    "observedAt": "2026-09-29T02:09:50.499Z"
+    "observedAt": "2026-09-29T02:23:14.769Z"
   },
   "jp10y": {
     "price": 3.091,
@@ -51,7 +51,7 @@
     "sourceUrl": "https://www.cnbc.com/quotes/JP10Y-JP",
     "sourceAsOf": "11:00 AM JST",
     "stale": false,
-    "observedAt": "2026-09-29T02:09:50.499Z"
+    "observedAt": "2026-09-29T02:23:14.769Z"
   },
   "fgi": {
     "price": 34,
@@ -61,9 +61,9 @@
     "sourceUrl": "https://www.cnn.com/markets/fear-and-greed",
     "sourceAsOf": "2026-09-28T23:59:50.000Z",
     "stale": false,
-    "observedAt": "2026-09-29T02:09:50.600Z"
+    "observedAt": "2026-09-29T02:23:15.007Z"
   },
-  "updatedAt": "2026. 9. 29. 11시 9분 50초",
-  "checkedAt": "2026-09-29T02:09:50.614Z",
+  "updatedAt": "2026. 9. 29. 11시 23분 15초",
+  "checkedAt": "2026-09-29T02:23:15.020Z",
   "partial": false
 }
