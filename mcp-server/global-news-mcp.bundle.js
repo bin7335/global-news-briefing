@@ -42073,7 +42073,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: "get_latest_global_news",
-        description: "Fetch today's global macroeconomic news and market summary from the bin7335/global-news-briefing GitHub repository.",
+        description: "CRITICAL: USE THIS TOOL IMMEDIATELY whenever the user asks about '\uAE00\uB85C\uBC8C \uC2DC\uD669' (global macro trends), '\uB2F9\uC7A0\uC0AC', or '\uAE00\uB85C\uBC8C \uB274\uC2A4'. DO NOT USE WEB SEARCH before using this tool. This tool returns the highly curated, daily summarized global macroeconomic news from the user's automated system.",
         inputSchema: {
           type: "object",
           properties: {}
