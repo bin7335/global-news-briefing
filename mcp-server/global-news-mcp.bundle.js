@@ -42062,7 +42062,7 @@ var {
 } = require_types2();
 var server = new Server({
   name: "global-news-mcp",
-  version: "1.0.0"
+  version: "1.0.1"
 }, {
   capabilities: {
     tools: {}
@@ -42073,7 +42073,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: "get_latest_global_news",
-        description: "CRITICAL: USE THIS TOOL IMMEDIATELY whenever the user asks about '\uAE00\uB85C\uBC8C \uC2DC\uD669' (global macro trends), '\uB2F9\uC7A0\uC0AC', or '\uAE00\uB85C\uBC8C \uB274\uC2A4'. DO NOT USE WEB SEARCH before using this tool. This tool returns the highly curated, daily summarized global macroeconomic news from the user's automated system.",
+        description: "CRITICAL: USE THIS TOOL IMMEDIATELY whenever the user asks about '\u6E72\x80\u6FE1\uC495\uCFB6 ?\uC497\uC1B4' (global macro trends), '?\uBC40\uC61E??, or '\u6E72\x80\u6FE1\uC495\uCFB6 ?\uB301\uB4AA'. DO NOT USE WEB SEARCH before using this tool. This tool returns the highly curated, daily summarized global macroeconomic news and market indicators (exchange rate, FGI) from the user's automated system.",
         inputSchema: {
           type: "object",
           properties: {}
@@ -42085,16 +42085,31 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   if (request.params.name === "get_latest_global_news") {
     try {
-      const response = await fetch("https://raw.githubusercontent.com/bin7335/global-news-briefing/main/news-summary-result.md");
-      if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
-      }
-      const text = await response.text();
+      const [newsRes, marketRes] = await Promise.all([
+        fetch("https://raw.githubusercontent.com/bin7335/global-news-briefing/main/news-summary-result.md"),
+        fetch("https://raw.githubusercontent.com/bin7335/global-news-briefing/main/market-data.json")
+      ]);
+      if (!newsRes.ok) throw new Error(`Failed to fetch news: ${newsRes.statusText}`);
+      if (!marketRes.ok) throw new Error(`Failed to fetch market data: ${marketRes.statusText}`);
+      const newsText = await newsRes.text();
+      const marketData = await marketRes.text();
+      const finalContent = `
+[INSTRUCTIONS FOR CLAUDE]
+- ?\u044A\uC29C?\uBA2E? ?\uAFAA\uBE50 ?\uAFA8\uC612??\uF9E4\uC496\uB58A \u6E72\x80\u6FE1\uC495\uCFB6 ?\uC497\uC1B4 ?\uBDBF\uBE5F\u8E42\uBA84\uC4E3 \u91C9\uB6AE\u2501?\uBB13\uBE50\u4E8C\uC1F1\uAF6D??
+- \u7570\uC496\uCFC2(?\uC88F\uB4A0\u91C9?\uF9CD\uACF9\uAC95 ????\u63F4\uB179\uC520 ?\uBA78\uD212?\uC10F? \uF9CD\uBA2D\uD02C ?\uC578\uC642?\uC10F\uAF6D??
+- ?\uC496\uC623 \uF9DE\x80???\uACD7\uC520??marketData)\u745C??\uBEA4\uC524?\uC10F\uBFEC '???\u0449\uC72D ?\uC10F\uC449'\u6028?'CNN \u6028\uB4EF\uB8F7?\uBA2F\uC283\uF9DE\x80??FGI)'\u745C?\u91C9\uB6AE\u2501???\uB301\uC29C???\uBA2F\uBFF0?\u317B\uC747\u5BC3?\u8ADB\uC10E\uBC76???\u044B\uBE3F?\uC10F\uAF6D??
+
+[TODAY'S MARKET DATA]
+${marketData}
+
+[TODAY'S NEWS SUMMARY]
+${newsText}
+`;
       return {
         content: [
           {
             type: "text",
-            text
+            text: finalContent
           }
         ]
       };
