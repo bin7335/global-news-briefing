@@ -1,27 +1,27 @@
 {
   "fx": {
-    "price": 1343.96,
-    "change": 0.25886056591246687,
+    "price": 1343.58,
+    "change": 0.2305127229595087,
     "stale": false,
-    "observedAt": "2026-10-06T02:35:14.285Z"
+    "observedAt": "2026-10-06T02:58:14.228Z"
   },
   "nasdaq": {
     "price": 27477.31,
     "change": 1.0534678505790718,
     "stale": false,
-    "observedAt": "2026-10-06T02:35:14.380Z"
+    "observedAt": "2026-10-06T02:58:14.260Z"
   },
   "sp500": {
     "price": 7773.95,
     "change": 0.6633673109992277,
     "stale": false,
-    "observedAt": "2026-10-06T02:35:14.482Z"
+    "observedAt": "2026-10-06T02:58:14.275Z"
   },
   "kospi": {
-    "price": 6966.25,
-    "change": -0.5352854332113954,
+    "price": 6945.45,
+    "change": -0.83226961594805,
     "stale": false,
-    "observedAt": "2026-10-06T02:35:14.556Z"
+    "observedAt": "2026-10-06T02:58:14.300Z"
   },
   "us10y": {
     "price": 5.32,
@@ -29,19 +29,19 @@
     "changeBp": 0.9,
     "source": "CNBC",
     "sourceUrl": "https://www.cnbc.com/quotes/US10Y",
-    "sourceAsOf": "10:35 PM EDT",
+    "sourceAsOf": "10:57 PM EDT",
     "stale": false,
-    "observedAt": "2026-10-06T02:35:15.028Z"
+    "observedAt": "2026-10-06T02:58:14.606Z"
   },
   "kr10y": {
-    "price": 4.384,
+    "price": 4.388,
     "change": null,
-    "changeBp": -0.2,
+    "changeBp": 0.2,
     "source": "CNBC",
     "sourceUrl": "https://www.cnbc.com/quotes/KR10Y-KR",
-    "sourceAsOf": "2:33 AM GMT",
+    "sourceAsOf": "2:53 AM GMT",
     "stale": false,
-    "observedAt": "2026-10-06T02:35:15.028Z"
+    "observedAt": "2026-10-06T02:58:14.606Z"
   },
   "jp10y": {
     "price": 3.122,
@@ -51,7 +51,7 @@
     "sourceUrl": "https://www.cnbc.com/quotes/JP10Y-JP",
     "sourceAsOf": "10:59 AM JST",
     "stale": false,
-    "observedAt": "2026-10-06T02:35:15.028Z"
+    "observedAt": "2026-10-06T02:58:14.606Z"
   },
   "fgi": {
     "price": 43,
@@ -61,9 +61,9 @@
     "sourceUrl": "https://www.cnn.com/markets/fear-and-greed",
     "sourceAsOf": "2026-10-05T23:59:42.000Z",
     "stale": false,
-    "observedAt": "2026-10-06T02:35:15.145Z"
+    "observedAt": "2026-10-06T02:58:14.732Z"
   },
-  "updatedAt": "2026. 10. 6. 11시 35분 15초",
-  "checkedAt": "2026-10-06T02:35:15.154Z",
+  "updatedAt": "2026. 10. 6. 11시 58분 14초",
+  "checkedAt": "2026-10-06T02:58:14.746Z",
   "partial": false
 }
