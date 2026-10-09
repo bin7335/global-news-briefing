@@ -3,35 +3,35 @@
     "price": 1342.26,
     "change": -0.022345370039324464,
     "stale": false,
-    "observedAt": "2026-10-09T02:39:12.691Z"
+    "observedAt": "2026-10-09T02:56:33.286Z"
   },
   "nasdaq": {
     "price": 27193.34,
     "change": -1.254057427784054,
     "stale": false,
-    "observedAt": "2026-10-09T02:39:12.764Z"
+    "observedAt": "2026-10-09T02:56:33.391Z"
   },
   "sp500": {
     "price": 7765.36,
     "change": -0.46668896929800235,
     "stale": false,
-    "observedAt": "2026-10-09T02:39:12.827Z"
+    "observedAt": "2026-10-09T02:56:33.459Z"
   },
   "kospi": {
     "price": 6625.93,
     "change": -2.615705698202492,
     "stale": false,
-    "observedAt": "2026-10-09T02:39:12.929Z"
+    "observedAt": "2026-10-09T02:56:33.531Z"
   },
   "us10y": {
-    "price": 5.227,
+    "price": 5.234,
     "change": null,
-    "changeBp": -0.6,
+    "changeBp": 0.1,
     "source": "CNBC",
     "sourceUrl": "https://www.cnbc.com/quotes/US10Y",
-    "sourceAsOf": "10:39 PM EDT",
+    "sourceAsOf": "10:54 PM EDT",
     "stale": false,
-    "observedAt": "2026-10-09T02:39:13.138Z"
+    "observedAt": "2026-10-09T02:56:33.877Z"
   },
   "kr10y": {
     "price": 4.394,
@@ -41,7 +41,7 @@
     "sourceUrl": "https://www.cnbc.com/quotes/KR10Y-KR",
     "sourceAsOf": "6:49 AM GMT",
     "stale": false,
-    "observedAt": "2026-10-09T02:39:13.138Z"
+    "observedAt": "2026-10-09T02:56:33.877Z"
   },
   "jp10y": {
     "price": 3.035,
@@ -51,7 +51,7 @@
     "sourceUrl": "https://www.cnbc.com/quotes/JP10Y-JP",
     "sourceAsOf": "10:59 AM JST",
     "stale": false,
-    "observedAt": "2026-10-09T02:39:13.138Z"
+    "observedAt": "2026-10-09T02:56:33.877Z"
   },
   "fgi": {
     "price": 38,
@@ -61,9 +61,9 @@
     "sourceUrl": "https://www.cnn.com/markets/fear-and-greed",
     "sourceAsOf": "2026-10-08T23:59:44.000Z",
     "stale": false,
-    "observedAt": "2026-10-09T02:39:13.296Z"
+    "observedAt": "2026-10-09T02:56:33.936Z"
   },
-  "updatedAt": "2026. 10. 9. 11시 39분 13초",
-  "checkedAt": "2026-10-09T02:39:13.310Z",
+  "updatedAt": "2026. 10. 9. 11시 56분 33초",
+  "checkedAt": "2026-10-09T02:56:33.947Z",
   "partial": false
 }
