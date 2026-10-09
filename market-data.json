@@ -1,37 +1,37 @@
 {
   "fx": {
-    "price": 1342.26,
-    "change": -0.022345370039324464,
+    "price": 1339.4,
+    "change": -0.2353712310809092,
     "stale": false,
-    "observedAt": "2026-10-09T02:56:33.286Z"
+    "observedAt": "2026-10-09T06:06:05.113Z"
   },
   "nasdaq": {
     "price": 27193.34,
     "change": -1.254057427784054,
     "stale": false,
-    "observedAt": "2026-10-09T02:56:33.391Z"
+    "observedAt": "2026-10-09T06:06:05.172Z"
   },
   "sp500": {
     "price": 7765.36,
     "change": -0.46668896929800235,
     "stale": false,
-    "observedAt": "2026-10-09T02:56:33.459Z"
+    "observedAt": "2026-10-09T06:06:05.225Z"
   },
   "kospi": {
     "price": 6625.93,
     "change": -2.615705698202492,
     "stale": false,
-    "observedAt": "2026-10-09T02:56:33.531Z"
+    "observedAt": "2026-10-09T06:06:05.275Z"
   },
   "us10y": {
-    "price": 5.234,
+    "price": 5.229,
     "change": null,
-    "changeBp": 0.1,
+    "changeBp": -0.4,
     "source": "CNBC",
     "sourceUrl": "https://www.cnbc.com/quotes/US10Y",
-    "sourceAsOf": "10:54 PM EDT",
+    "sourceAsOf": "2:05 AM EDT",
     "stale": false,
-    "observedAt": "2026-10-09T02:56:33.877Z"
+    "observedAt": "2026-10-09T06:06:05.407Z"
   },
   "kr10y": {
     "price": 4.394,
@@ -41,17 +41,17 @@
     "sourceUrl": "https://www.cnbc.com/quotes/KR10Y-KR",
     "sourceAsOf": "6:49 AM GMT",
     "stale": false,
-    "observedAt": "2026-10-09T02:56:33.877Z"
+    "observedAt": "2026-10-09T06:06:05.407Z"
   },
   "jp10y": {
-    "price": 3.035,
+    "price": 3.012,
     "change": null,
-    "changeBp": -4.9,
+    "changeBp": -7.2,
     "source": "CNBC",
     "sourceUrl": "https://www.cnbc.com/quotes/JP10Y-JP",
-    "sourceAsOf": "10:59 AM JST",
+    "sourceAsOf": "3:05 PM JST",
     "stale": false,
-    "observedAt": "2026-10-09T02:56:33.877Z"
+    "observedAt": "2026-10-09T06:06:05.407Z"
   },
   "fgi": {
     "price": 38,
@@ -59,11 +59,11 @@
     "rating": "fear",
     "source": "CNN",
     "sourceUrl": "https://www.cnn.com/markets/fear-and-greed",
-    "sourceAsOf": "2026-10-08T23:59:44.000Z",
+    "sourceAsOf": "2026-10-09T00:00:00.000Z",
     "stale": false,
-    "observedAt": "2026-10-09T02:56:33.936Z"
+    "observedAt": "2026-10-09T06:06:05.470Z"
   },
-  "updatedAt": "2026. 10. 9. 11시 56분 33초",
-  "checkedAt": "2026-10-09T02:56:33.947Z",
+  "updatedAt": "2026. 10. 9. 15시 6분 5초",
+  "checkedAt": "2026-10-09T06:06:05.485Z",
   "partial": false
 }
