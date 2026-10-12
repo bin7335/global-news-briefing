@@ -267,7 +267,7 @@ export async function fetchMarketSnapshot(directory = '.') {
       results[key] = { ...(previous[key] ?? { price: null, change: null }), stale: true };
     }
   }
-  for (const [key, symbol] of Object.entries({ fx: 'KRW=X', nasdaq: '^IXIC', sp500: '^GSPC', kospi: '^KS11' })) {
+  for (const [key, symbol] of Object.entries({ fx: 'KRW=X', dxy: 'DX-Y.NYB', nasdaq: '^IXIC', sp500: '^GSPC', kospi: '^KS11' })) {
     await collect(key, async () => {
       const response = await checkedFetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}`);
       const data = await response.json();
@@ -289,9 +289,9 @@ export async function fetchMarketSnapshot(directory = '.') {
   await collect('fgi', fetchFearGreed);
   results.updatedAt = succeeded ? new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', hour12: false }) : previous.updatedAt ?? null;
   results.checkedAt = new Date().toISOString();
-  results.partial = succeeded < 8;
+  results.partial = succeeded < 9;
   atomicWrite(filename, JSON.stringify(results, null, 2) + '\n');
-  console.log(`[시장 지표] ${succeeded}/8 갱신`);
+  console.log(`[시장 지표] ${succeeded}/9 갱신`);
 }
 
 async function main() {
