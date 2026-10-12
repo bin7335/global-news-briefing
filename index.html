@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -68,7 +68,7 @@
     }
     #market-snapshot {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       width: 100%;
     }
     .market-item { min-width: 0; text-align: center; padding: 4px 8px; }
@@ -151,6 +151,10 @@
           <span class="market-value" id="stat-fx">--</span>
         </div>
         <div class="market-item">
+          <span class="market-label">달러인덱스</span>
+          <span class="market-value" id="stat-dxy">--</span>
+        </div>
+        <div class="market-item">
           <span class="market-label">미 10년물</span>
           <span class="market-value" id="stat-us10y">--</span>
         </div>
@@ -225,7 +229,7 @@
     fetch('market-data.json?t=' + new Date().getTime())
       .then(res => { if (!res.ok) throw new Error('시세 조회 실패'); return res.json(); })
       .then(data => {
-        for (const key of ['fx', 'nasdaq', 'sp500', 'kospi', 'us10y', 'kr10y', 'jp10y', 'fgi']) {
+        for (const key of ['fx', 'dxy', 'nasdaq', 'sp500', 'kospi', 'us10y', 'kr10y', 'jp10y', 'fgi']) {
           const element = document.getElementById('stat-' + key);
           if (!element) continue;
           const quote = data[key];
