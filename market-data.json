@@ -1,75 +1,75 @@
 {
   "fx": {
-    "price": 1337.48,
-    "change": 0.12426823973290428,
+    "price": 1329.52,
+    "change": -0.3881021952498736,
     "stale": false,
-    "observedAt": "2026-11-17T07:52:05.680Z"
+    "observedAt": "2026-11-18T03:47:02.226Z"
   },
   "dxy": {
-    "price": 103.535,
-    "change": -0.013520169195269875,
+    "price": 103.606,
+    "change": 0.11692515823548834,
     "stale": false,
-    "observedAt": "2026-11-17T07:52:05.761Z"
+    "observedAt": "2026-11-18T03:47:02.321Z"
   },
   "nasdaq": {
-    "price": 24509.758,
-    "change": -2.492473725122254,
+    "price": 24328.383,
+    "change": -0.7400113864853336,
     "stale": false,
-    "observedAt": "2026-11-17T07:52:05.811Z"
+    "observedAt": "2026-11-18T03:47:02.403Z"
   },
   "sp500": {
-    "price": 7416.59,
-    "change": -1.9186237960662118,
+    "price": 7340.53,
+    "change": -1.0255386909617545,
     "stale": false,
-    "observedAt": "2026-11-17T07:52:05.858Z"
+    "observedAt": "2026-11-18T03:47:02.485Z"
   },
   "kospi": {
-    "price": 4968.48,
-    "change": -2.5883736888540425,
+    "price": 4982.93,
+    "change": 0.2908334138408674,
     "stale": false,
-    "observedAt": "2026-11-17T07:52:05.945Z"
+    "observedAt": "2026-11-18T03:47:02.543Z"
   },
   "us10y": {
-    "price": 5.117,
+    "price": 5.087,
     "change": null,
-    "changeBp": -0.4,
+    "changeBp": -1.6,
     "source": "CNBC",
     "sourceUrl": "https://www.cnbc.com/quotes/US10Y",
-    "sourceAsOf": "2:52 AM EST",
+    "sourceAsOf": "10:46 PM EST",
     "stale": false,
-    "observedAt": "2026-11-17T07:52:06.013Z"
+    "observedAt": "2026-11-18T03:47:02.887Z"
   },
   "kr10y": {
-    "price": 3.985,
+    "price": 3.965,
     "change": null,
-    "changeBp": 0.3,
+    "changeBp": -2,
     "source": "CNBC",
     "sourceUrl": "https://www.cnbc.com/quotes/KR10Y-KR",
-    "sourceAsOf": "6:54 AM GMT",
+    "sourceAsOf": "3:38 AM GMT",
     "stale": false,
-    "observedAt": "2026-11-17T07:52:06.013Z"
+    "observedAt": "2026-11-18T03:47:02.887Z"
   },
   "jp10y": {
-    "price": 2.874,
+    "price": 2.854,
     "change": null,
-    "changeBp": -1,
+    "changeBp": -3,
     "source": "CNBC",
     "sourceUrl": "https://www.cnbc.com/quotes/JP10Y-JP",
-    "sourceAsOf": "4:52 PM JST",
+    "sourceAsOf": "12:47 PM JST",
     "stale": false,
-    "observedAt": "2026-11-17T07:52:06.013Z"
+    "observedAt": "2026-11-18T03:47:02.887Z"
   },
   "fgi": {
-    "price": 31,
+    "price": 25,
     "change": null,
     "rating": "fear",
     "source": "CNN",
     "sourceUrl": "https://www.cnn.com/markets/fear-and-greed",
-    "sourceAsOf": "2026-11-17T01:00:00.000Z",
+    "sourceAsOf": "2026-11-17T23:59:42.000Z",
     "stale": false,
-    "observedAt": "2026-11-17T07:52:06.092Z"
+    "observedAt": "2026-11-18T03:47:02.947Z"
   },
-  "updatedAt": "2026. 11. 17. 16시 52분 6초",
-  "checkedAt": "2026-11-17T07:52:06.102Z",
+  "updatedAt": "2026. 11. 18. 12시 47분 2초",
+  "checkedAt": "2026-11-18T03:47:02.957Z",
   "partial": false
 }
